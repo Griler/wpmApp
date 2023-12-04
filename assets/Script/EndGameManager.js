@@ -12,15 +12,16 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        textName:cc.Label,
-        textWordInput:cc.Label,
-        textWordWrong:cc.Label,
-        textCorrect: cc.Label
+        textName: cc.Label,
+        textWordInput: cc.Label,
+        textWordWrong: cc.Label,
+        textCorrect: cc.Label,
+        textWpm: cc.Label
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    onLoad () {
+    onLoad() {
         this.jsonString = cc.sys.localStorage.getItem('playerData');
         this.jsonData = null;
         if (this.jsonString) {
@@ -33,10 +34,11 @@ cc.Class({
         this.textName.string = `name : ${this.jsonData.name}`
         this.textWordInput.string = `Word Input  : ${this.jsonData.textWordInput.length} words`
         this.textWordWrong.string = `Word Wrong  : ${this.jsonData.textWordWrong.length} words`
-        this.textCorrect.string = `Correct : ${parseInt((1-(this.jsonData.textWordWrong.length/this.jsonData.textWordInput.length))*100)}%`
+        this.textCorrect.string = `Correct : ${parseInt((1 - (this.jsonData.textWordWrong.length / this.jsonData.textWordInput.length)) * 100)}%`
+        this.textWpm.string = `Wpm : ${this.jsonData.textWordInput.length}`
     },
 
-    start () {
+    start() {
 
     },
 

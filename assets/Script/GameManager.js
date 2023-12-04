@@ -7,7 +7,8 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-const readTime = require('word-per-minute');
+var randomWords = require('better-random-words');
+
 cc.Class({
     extends: cc.Component,
 
@@ -20,6 +21,7 @@ cc.Class({
         gridLabel: cc.Layout,
         editText: cc.EditBox,
         endLayout: cc.Layout,
+        timeLabel:cc.Label,
         labelPrefab: cc.Prefab
     },
 
@@ -47,26 +49,16 @@ cc.Class({
         this.timer = 0;
         this.coldDownTime = 60;
         this.startGame = false;
-        this.targetWords = this.txtLabel.string.split(' ');
+        //this.txtLabel.string= randomWords();
+       // this.targetWords = this.txtLabel.string.split(' ');
+        this.targetWords = randomWords(70);
         this.inputWords = [];
         this.falseWords = [];
         this.i = 0;
         this.hasRunOnce = false;
-        this.arrLabel = []
+        this.arrLabel = [];
         this.index = 0
-        // this.createLabel();
-        for (let targetWord = 0; targetWord < this.targetWords.length - 1; targetWord++) {
-            const labelNode = cc.instantiate(this.labelPrefab);
-            const labelComponent = labelNode.getComponent(cc.Label);
-            labelComponent.string = `${this.targetWords[targetWord]} `;
-            labelComponent.name = `label + ${this.targetWords[targetWord]}`;
-            labelComponent.fontSize = 20;
-            labelNode.position = cc.v2(0, 0);
-            labelNode.angle = cc.v2(0, 0);
-            this.arrLabel.push(labelComponent)
-            this.gridLabel.node.addChild(labelNode);
-        }
-        cc.log(this.endLayout);
+        this.createLabel();
     },
 
     start() {
@@ -79,11 +71,11 @@ cc.Class({
         }
     },
     checkText() {
-        for (this.i; this.i < this.inputWords.length; this.i++) {
+/*        for (this.i; this.i < this.inputWords.length; this.i++) {
             if (this.targetWords[this.i] !== this.inputWords[this.i]) {
                 this.falseWords.push(this.inputWords[this.i]);
             }
-        }
+        }*/
         this.jsonData.textWordInput = this.inputWords;
         this.jsonData.textWordWrong = this.falseWords;
         this.jsonString = JSON.stringify(this.jsonData);
@@ -96,30 +88,33 @@ cc.Class({
         if (this.editText.string[this.editText.string.length - 1] === ' ' && this.editText.string !== "") {
             let string = this.editText.string.substring(0, this.editText.string.length - 1);
             if (string !== '') {
+                this.inputWords.push(string)
                 if (string !== this.targetWords[this.index]) {
                     this.arrLabel[this.index].node.color = cc.Color.RED;
-                    this.inputWords.push(string)
+                    this.falseWords.push(string);
                 }
+                this.index++;
             }
-            cc.log(this.inputWords);
             this.editText.string = '';
             this.editText.blur();
             this.editText.focus();
-            this.index++;
         }
     },
     initGame(dt) {
+        this.timeLabel.string = parseInt(this.coldDownTime)+'';
         this.coldDownTime -= dt;
         this.timer += dt;
-        if (this.timer >= 6) {
-            this.clockImg.fillRange -= 0.1;
+        if (this.timer >= 1) {
+            this.clockImg.fillRange -= 0.1/6;
             this.timer = 0;
         }
-        if (0.1 < this.clockImg.fillRange && this.clockImg.fillRange <= 0.6) {
+        if (0.1 < this.clockImg.fillRange && this.clockImg.fillRange <= 0.4) {
             this.clockImg.node.color = cc.Color.YELLOW;
         } else if (0 <= this.clockImg.fillRange &&  this.clockImg.fillRange <= 0.1) {
             this.clockImg.node.color = cc.Color.RED;
-        } else if (this.coldDownTime < 0) {
+        }
+         if (this.coldDownTime < 0 ||this.index ===  this.targetWords.length-1) {
+            this.checkText();
             this.clockImg.node.active = false;
             this.node.active = false;
             this.endLayout.node.active = true;
@@ -127,15 +122,15 @@ cc.Class({
     },
 
     createLabel() {
-        for (let targetWord of this.targetWords) {
+        for (let targetWord = 0; targetWord < this.targetWords.length - 1; targetWord++) {
             const labelNode = cc.instantiate(this.labelPrefab);
-            const labelComponent = labelNode.addComponent(cc.Label);
-
-            // Đặt văn bản cho label
-            labelComponent.string = `Label ${i + 1}`;
-            // Thêm label vào mảng
-            this.arrLabel.push(labelComponent);
-            // Thêm label vào scene
+            const labelComponent = labelNode.getComponent(cc.Label);
+            labelComponent.string = `${this.targetWords[targetWord]} `;
+            labelComponent.name = `label + ${this.targetWords[targetWord]}`;
+            labelComponent.fontSize = 18;
+            labelNode.position = cc.v2(0, 0);
+            labelNode.angle = cc.v2(0, 0);
+            this.arrLabel.push(labelComponent)
             this.gridLabel.node.addChild(labelNode);
         }
     }

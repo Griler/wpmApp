@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "better-random-words": "^1.0.0",
+    "random-paragraph": "^1.0.4"
+  }
+}
