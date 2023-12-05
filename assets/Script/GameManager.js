@@ -7,7 +7,8 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-var randomWords = require('better-random-words');
+const randomWords
+    = require('better-random-words');
 
 cc.Class({
     extends: cc.Component,
@@ -21,7 +22,7 @@ cc.Class({
         gridLabel: cc.Layout,
         editText: cc.EditBox,
         endLayout: cc.Layout,
-        timeLabel:cc.Label,
+        timeLabel: cc.Label,
         labelPrefab: cc.Prefab
     },
 
@@ -50,7 +51,7 @@ cc.Class({
         this.coldDownTime = 60;
         this.startGame = false;
         //this.txtLabel.string= randomWords();
-       // this.targetWords = this.txtLabel.string.split(' ');
+        // this.targetWords = this.txtLabel.string.split(' ');
         this.targetWords = randomWords(70);
         this.inputWords = [];
         this.falseWords = [];
@@ -71,11 +72,11 @@ cc.Class({
         }
     },
     checkText() {
-/*        for (this.i; this.i < this.inputWords.length; this.i++) {
-            if (this.targetWords[this.i] !== this.inputWords[this.i]) {
-                this.falseWords.push(this.inputWords[this.i]);
-            }
-        }*/
+        /*        for (this.i; this.i < this.inputWords.length; this.i++) {
+                    if (this.targetWords[this.i] !== this.inputWords[this.i]) {
+                        this.falseWords.push(this.inputWords[this.i]);
+                    }
+                }*/
         this.jsonData.textWordInput = this.inputWords;
         this.jsonData.textWordWrong = this.falseWords;
         this.jsonString = JSON.stringify(this.jsonData);
@@ -101,19 +102,19 @@ cc.Class({
         }
     },
     initGame(dt) {
-        this.timeLabel.string = parseInt(this.coldDownTime)+'';
+        this.timeLabel.string = parseInt(this.coldDownTime) + '';
         this.coldDownTime -= dt;
         this.timer += dt;
         if (this.timer >= 1) {
-            this.clockImg.fillRange -= 0.1/6;
+            this.clockImg.fillRange -= 0.1 / 6;
             this.timer = 0;
         }
         if (0.1 < this.clockImg.fillRange && this.clockImg.fillRange <= 0.4) {
             this.clockImg.node.color = cc.Color.YELLOW;
-        } else if (0 <= this.clockImg.fillRange &&  this.clockImg.fillRange <= 0.1) {
+        } else if (0 <= this.clockImg.fillRange && this.clockImg.fillRange <= 0.1) {
             this.clockImg.node.color = cc.Color.RED;
         }
-         if (this.coldDownTime < 0 ||this.index ===  this.targetWords.length-1) {
+        if (this.coldDownTime < 0 || this.index === this.targetWords.length - 1) {
             this.checkText();
             this.clockImg.node.active = false;
             this.node.active = false;
@@ -126,6 +127,7 @@ cc.Class({
             const labelNode = cc.instantiate(this.labelPrefab);
             const labelComponent = labelNode.getComponent(cc.Label);
             labelComponent.string = `${this.targetWords[targetWord]} `;
+            labelComponent.cacheMode = 2;
             labelComponent.name = `label + ${this.targetWords[targetWord]}`;
             labelComponent.fontSize = 18;
             labelNode.position = cc.v2(0, 0);
